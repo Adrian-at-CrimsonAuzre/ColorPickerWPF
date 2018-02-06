@@ -23,9 +23,6 @@ namespace ColorPickerWPF
 
         public event ColorPickerChangeHandler OnPickColor;
 
-        public List<ColorSwatchItem> ColorSwatch1 = new List<ColorSwatchItem>();
-        public List<ColorSwatchItem> ColorSwatch2 = new List<ColorSwatchItem>();
-
         public bool IsSettingValues = false;
 
         protected const int NumColorsFirstSwatch = 39;
@@ -59,20 +56,9 @@ namespace ColorPickerWPF
             }
 
 
-            ColorSwatch1.AddRange(ColorPalette.BuiltInColors.Take(NumColorsFirstSwatch).ToArray());
-
-            ColorSwatch2.AddRange(ColorPalette.BuiltInColors.Skip(NumColorsFirstSwatch).Take(NumColorsSecondSwatch).ToArray());
-            
-            Swatch1.SwatchListBox.ItemsSource = ColorSwatch1;
-            Swatch2.SwatchListBox.ItemsSource = ColorSwatch2;
-
-            CustomColorSwatch.SwatchListBox.ItemsSource = ColorPalette.CustomColors;
-
-
             RSlider.Slider.Maximum = 255;
             GSlider.Slider.Maximum = 255;
             BSlider.Slider.Maximum = 255;
-            ASlider.Slider.Maximum = 255;
             HSlider.Slider.Maximum = 360;
             SSlider.Slider.Maximum = 1;
             LSlider.Slider.Maximum = 1;
@@ -87,10 +73,6 @@ namespace ColorPickerWPF
             BSlider.Label.Content = "B";
             BSlider.Slider.TickFrequency = 1;
             BSlider.Slider.IsSnapToTickEnabled = true;
-
-            ASlider.Label.Content = "A";
-            ASlider.Slider.TickFrequency = 1;
-            ASlider.Slider.IsSnapToTickEnabled = true;
 
             HSlider.Label.Content = "H";
             HSlider.Slider.TickFrequency = 1;
@@ -110,24 +92,20 @@ namespace ColorPickerWPF
 
         public void SetColor(Color color)
         {
-            Color = color;
-
-            CustomColorSwatch.CurrentColor = color;
+			Color = color;
 
             IsSettingValues = true;
 
             RSlider.Slider.Value = Color.R;
             GSlider.Slider.Value = Color.G;
             BSlider.Slider.Value = Color.B;
-            ASlider.Slider.Value = Color.A;
 
             SSlider.Slider.Value = Color.GetSaturation();
             LSlider.Slider.Value = Color.GetBrightness();
             HSlider.Slider.Value = Color.GetHue();
+			ColorDisplayBorder.Background = new SolidColorBrush(Color);
 
-            ColorDisplayBorder.Background = new SolidColorBrush(Color);
-
-            IsSettingValues = false;
+			IsSettingValues = false;
             OnPickColor?.Invoke(color);
 
         }
@@ -167,13 +145,6 @@ namespace ColorPickerWPF
             SampleImageClick(img, pos);
         }
 
-        private void SampleImage2_OnMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            var pos = e.GetPosition(SampleImage2);
-            var img = SampleImage2.Source as BitmapSource;
-            SampleImageClick(img, pos);
-        }
-
         private void Swatch_OnOnPickColor(Color color)
         {
             SetColor(color);
@@ -186,7 +157,7 @@ namespace ColorPickerWPF
                 var s = Color.GetSaturation();
                 var l = Color.GetBrightness();
                 var h = (float) value;
-                var a = (int) ASlider.Slider.Value;
+				var a = 255;
                 Color = Util.FromAhsb(a, h, s, l);
 
                 SetColor(Color);
@@ -243,66 +214,12 @@ namespace ColorPickerWPF
                 var s = (float) value;
                 var l = Color.GetBrightness();
                 var h = Color.GetHue();
-                var a = (int) ASlider.Slider.Value;
+				var a = 255;
                 Color = Util.FromAhsb(a, h, s, l);
 
                 SetColor(Color);
             }
 
-        }
-
-        private void PickerHueSlider_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            UpdateImageForHSV();
-        }
-
-
-        private void UpdateImageForHSV()
-        {
-
-            //var hueChange = (int)((PickerHueSlider.Value / 360.0) * 240);
-            var sliderHue = (float) PickerHueSlider.Value;
-
-
-            //var colorPickerImage = System.IO.Path.Combine(Environment.CurrentDirectory, @"/Resources/colorpicker1.png");
-            var img =
-                new BitmapImage(new Uri("pack://application:,,,/ColorPickerWPF;component/Resources/colorpicker2.png",
-                    UriKind.Absolute));
-
-            var writableImage = BitmapFactory.ConvertToPbgra32Format(img);
-
-            if (sliderHue <= 0f || sliderHue >= 360f)
-            {
-                // No hue change just return
-                SampleImage2.Source = img;
-                return;
-            }
-
-            using (var context = writableImage.GetBitmapContext())
-            {
-                long numPixels = img.PixelWidth*img.PixelHeight;
-
-                for (int x = 0; x < img.PixelWidth; x++)
-                {
-                    for (int y = 0; y < img.PixelHeight; y++)
-                    {
-                        var pixel = writableImage.GetPixel(x, y);
-
-                        var newHue = (float) (sliderHue + pixel.GetHue());
-                        if (newHue >= 360)
-                            newHue -= 360;
-
-                        var color = Util.FromAhsb((int) 255,
-                            newHue, pixel.GetSaturation(), pixel.GetBrightness());
-
-                        writableImage.SetPixel(x, y, color);
-                    }
-                }
-            }
-
-
-
-            SampleImage2.Source = writableImage;
         }
 
         private void LSlider_OnOnValueChanged(double value)
@@ -312,62 +229,11 @@ namespace ColorPickerWPF
                 var s = Color.GetSaturation();
                 var l = (float) value;
                 var h = Color.GetHue();
-                var a = (int) ASlider.Slider.Value;
+				var a = 255;
                 Color = Util.FromAhsb(a, h, s, l);
 
                 SetColor(Color);
             }
         }
-
-
-        public void SaveCustomPalette(string filename)
-        {
-            var colors = CustomColorSwatch.GetColors();
-            ColorPalette.CustomColors = colors;
-
-            try
-            {
-                ColorPalette.SaveToXml(filename);
-            }
-            catch (Exception ex)
-            {
-                ex = ex;
-            }
-        }
-
-        public void LoadCustomPalette(string filename)
-        {
-            if (File.Exists(filename))
-            {
-                try
-                {
-                    ColorPalette = ColorPalette.LoadFromXml(filename);
-
-                    CustomColorSwatch.SwatchListBox.ItemsSource = ColorPalette.CustomColors.ToList();
-
-                    // Do regular one too
-
-                    ColorSwatch1.Clear();
-                    ColorSwatch2.Clear();
-                    ColorSwatch1.AddRange(ColorPalette.BuiltInColors.Take(NumColorsFirstSwatch).ToArray());
-                    ColorSwatch2.AddRange(ColorPalette.BuiltInColors.Skip(NumColorsFirstSwatch).Take(NumColorsSecondSwatch).ToArray());
-                    Swatch1.SwatchListBox.ItemsSource = ColorSwatch1;
-                    Swatch2.SwatchListBox.ItemsSource = ColorSwatch2;
-
-                }
-                catch (Exception ex)
-                {
-                    ex = ex;
-                }
-
-            }
-        }
-
-
-        public void LoadDefaultCustomPalette()
-        {
-            LoadCustomPalette(Settings.Default.DefaultColorPaletteFilename);
-        }
-
     }
 }

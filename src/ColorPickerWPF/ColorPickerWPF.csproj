@@ -66,12 +66,6 @@
     <Compile Include="ColorPickerSwatch.xaml.cs">
       <DependentUpon>ColorPickerSwatch.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ColorPickerWindow.xaml.cs">
-      <DependentUpon>ColorPickerWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ColorPickRow.xaml.cs">
-      <DependentUpon>ColorPickRow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -110,14 +104,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ColorPickerSwatch.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ColorPickerWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ColorPickRow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

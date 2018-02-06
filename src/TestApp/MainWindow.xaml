@@ -7,9 +7,6 @@
         xmlns:ColorPickerWPF="clr-namespace:ColorPickerWPF;assembly=ColorPickerWPF" x:Class="TestApp.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
 
-        <ColorPickerWPF:ColorPickRow HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-
-    </Grid>
+        <ColorPickerWPF:ColorPickerControl/>
 </Window>
