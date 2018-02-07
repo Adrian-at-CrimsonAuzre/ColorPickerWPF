@@ -6,15 +6,16 @@ using ColorPickerWPF.Code;
 using MColor = System.Windows.Media.Color;
 using UserControl = System.Windows.Controls.UserControl;
 using System.ComponentModel;
+using System.IO;
 
 namespace ColorPickerWPF
 {
-    /// <summary>
-    /// Interaction logic for ColorPickerControl.xaml
-    /// </summary>
-    public partial class ColorPickerControl : UserControl
-    {
-		
+	/// <summary>
+	/// Interaction logic for ColorPickerControl.xaml
+	/// </summary>
+	public partial class ColorPickerControl : UserControl
+	{
+
 		#region Color
 		/// <summary>
 		/// Identifies the <see cref="Color" /> dependency property. 
@@ -76,200 +77,191 @@ namespace ColorPickerWPF
 			}
 		}
 		#endregion
-		
-        public delegate void ColorPickerChangeHandler(Color color);
 
-        public event ColorPickerChangeHandler OnPickColor;
+		public delegate void ColorPickerChangeHandler(Color color);
 
-        public bool IsSettingValues = false;
+		public event ColorPickerChangeHandler OnPickColor;
 
-        protected const int NumColorsFirstSwatch = 39;
-        protected const int NumColorsSecondSwatch = 112;
+		public bool IsSettingValues = false;
+
+		protected const int NumColorsFirstSwatch = 39;
+		protected const int NumColorsSecondSwatch = 112;
 
 
 
-        public ColorPickerControl()
-        {
-            InitializeComponent();
+		public ColorPickerControl()
+		{
+			InitializeComponent();
 			this.DataContext = this;
 
-            RSlider.Slider.Maximum = 255;
-            GSlider.Slider.Maximum = 255;
-            BSlider.Slider.Maximum = 255;
-            HSlider.Slider.Maximum = 360;
-            SSlider.Slider.Maximum = 1;
-            LSlider.Slider.Maximum = 1;
+			RSlider.Slider.Maximum = 255;
+			GSlider.Slider.Maximum = 255;
+			BSlider.Slider.Maximum = 255;
+			HSlider.Slider.Maximum = 360;
+			SSlider.Slider.Maximum = 1;
+			LSlider.Slider.Maximum = 1;
 
 
-            RSlider.Label.Content = "R";
-            RSlider.Slider.TickFrequency = 1;
-            RSlider.Slider.IsSnapToTickEnabled = true;
-            GSlider.Label.Content = "G";
-            GSlider.Slider.TickFrequency = 1;
-            GSlider.Slider.IsSnapToTickEnabled = true;
-            BSlider.Label.Content = "B";
-            BSlider.Slider.TickFrequency = 1;
-            BSlider.Slider.IsSnapToTickEnabled = true;
+			RSlider.Label.Content = "R";
+			RSlider.Slider.TickFrequency = 1;
+			RSlider.Slider.IsSnapToTickEnabled = true;
+			GSlider.Label.Content = "G";
+			GSlider.Slider.TickFrequency = 1;
+			GSlider.Slider.IsSnapToTickEnabled = true;
+			BSlider.Label.Content = "B";
+			BSlider.Slider.TickFrequency = 1;
+			BSlider.Slider.IsSnapToTickEnabled = true;
 
-            HSlider.Label.Content = "H";
-            HSlider.Slider.TickFrequency = 1;
-            HSlider.Slider.IsSnapToTickEnabled = true;
-            SSlider.Label.Content = "S";
-            //SSlider.Slider.TickFrequency = 1;
-            //SSlider.Slider.IsSnapToTickEnabled = true;
-            LSlider.Label.Content = "V";
-            //LSlider.Slider.TickFrequency = 1;
-            //LSlider.Slider.IsSnapToTickEnabled = true;
-
-
-            SetColor(Color);
-
-        }
+			HSlider.Label.Content = "H";
+			HSlider.Slider.TickFrequency = 1;
+			HSlider.Slider.IsSnapToTickEnabled = true;
+			SSlider.Label.Content = "S";
+			//SSlider.Slider.TickFrequency = 1;
+			//SSlider.Slider.IsSnapToTickEnabled = true;
+			LSlider.Label.Content = "V";
+			//LSlider.Slider.TickFrequency = 1;
+			//LSlider.Slider.IsSnapToTickEnabled = true;
 
 
-        public void SetColor(Color color)
-        {
+			SetColor(Color);
+
+		}
+
+
+		public void SetColor(Color color)
+		{
 			Color = color;
 
-            IsSettingValues = true;
+			IsSettingValues = true;
 
-            RSlider.Slider.Value = Color.R;
+			RSlider.Slider.Value = Color.R;
 			RSlider.Label.Content = "Red";
-            GSlider.Slider.Value = Color.G;
+			GSlider.Slider.Value = Color.G;
 			GSlider.Label.Content = "Green";
-            BSlider.Slider.Value = Color.B;
+			BSlider.Slider.Value = Color.B;
 			BSlider.Label.Content = "Blue";
 
 			SSlider.Slider.Value = Color.GetSaturation();
 			SSlider.Label.Content = "Saturation";
-            LSlider.Slider.Value = Color.GetBrightness();
+			LSlider.Slider.Value = Color.GetBrightness();
 			LSlider.Label.Content = "Brightness";
 			HSlider.Slider.Value = Color.GetHue();
 			HSlider.Label.Content = "Hue";
-			ColorDisplayBorder.Background = new System.Windows.Media.SolidColorBrush(MColor.FromRgb(Color.R,Color.G,Color.B));
+			ColorDisplayBorder.Background = new System.Windows.Media.SolidColorBrush(MColor.FromRgb(Color.R, Color.G, Color.B));
 
 			IsSettingValues = false;
-            OnPickColor?.Invoke(color);
+			OnPickColor?.Invoke(color);
 
-        }
-
-
-        protected void SampleImageClick(BitmapSource img, System.Windows.Point pos)
-        {
-            // https://social.msdn.microsoft.com/Forums/vstudio/en-US/82a5731e-e201-4aaf-8d4b-062b138338fe/getting-pixel-information-from-a-bitmapimage?forum=wpf
-
-            int stride = (int) img.Width*4;
-            int size = (int) img.Height*stride;
-            byte[] pixels = new byte[(int) size];
-
-            img.CopyPixels(pixels, stride, 0);
+		}
 
 
-            // Get pixel
-            var x = (int) pos.X;
-            var y = (int) pos.Y;
+		protected void SampleImageClick(System.Windows.Point pos)
+		{
+			Bitmap bitmap;
+			using (MemoryStream outStream = new MemoryStream())
+			{
+				BitmapEncoder enc = new BmpBitmapEncoder();
 
-            int index = y*stride + 4*x;
+				enc.Frames.Add(BitmapFrame.Create(SampleImage.Source as BitmapSource));
+				enc.Save(outStream);
+				bitmap = new Bitmap(outStream);
+			}
+			double XScale = SampleImage.ActualWidth / bitmap.Width;
+			double YScale = SampleImage.ActualHeight / bitmap.Height;
+			var pixel = bitmap.GetPixel((int)(pos.X / XScale), (int)(pos.Y / YScale));
+			SetColor(Color.FromArgb(pixel.R, pixel.G, pixel.B));
+		}
 
-            byte red = pixels[index];
-            byte green = pixels[index + 1];
-            byte blue = pixels[index + 2];
-            byte alpha = pixels[index + 3];
 
-            var color = Color.FromArgb(alpha, blue, green, red);
-            SetColor(color);
-        }
+		private void SampleImage_OnMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			var pos = e.GetPosition(SampleImage);
+			var img = SampleImage.Source as BitmapSource;
+			SampleImageClick(pos);
+		}
 
+		private void Swatch_OnOnPickColor(Color color)
+		{
+			SetColor(color);
+		}
 
-        private void SampleImage_OnMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            var pos = e.GetPosition(SampleImage);
-            var img = SampleImage.Source as BitmapSource;
-            SampleImageClick(img, pos);
-        }
-
-        private void Swatch_OnOnPickColor(Color color)
-        {
-            SetColor(color);
-        }
-
-        private void HSlider_OnOnValueChanged(double value)
-        {
-            if (!IsSettingValues)
-            {
-                var s = Color.GetSaturation();
-                var l = Color.GetBrightness();
-                var h = (float) value;
+		private void HSlider_OnOnValueChanged(double value)
+		{
+			if (!IsSettingValues)
+			{
+				var s = Color.GetSaturation();
+				var l = Color.GetBrightness();
+				var h = (float)value;
 				var a = 255;
-                Color = Util.FromAhsb(a, h, s, l);
+				Color = Util.FromAhsb(a, h, s, l);
 
-                SetColor(Color);
-            }
-        }
-
-
+				SetColor(Color);
+			}
+		}
 
 
-        private void RSlider_OnOnValueChanged(double value)
-        {
-            if (!IsSettingValues)
-            {
+
+
+		private void RSlider_OnOnValueChanged(double value)
+		{
+			if (!IsSettingValues)
+			{
 				Color = Color.FromArgb((byte)value, Color.B, Color.G);
-                SetColor(Color);
-            }
-        }
+				SetColor(Color);
+			}
+		}
 
-        private void GSlider_OnOnValueChanged(double value)
-        {
-            if (!IsSettingValues)
-            {
+		private void GSlider_OnOnValueChanged(double value)
+		{
+			if (!IsSettingValues)
+			{
 				Color = Color.FromArgb(Color.R, Color.B, (byte)value);
 				SetColor(Color);
-            }
-        }
+			}
+		}
 
-        private void BSlider_OnOnValueChanged(double value)
-        {
-            if (!IsSettingValues)
+		private void BSlider_OnOnValueChanged(double value)
+		{
+			if (!IsSettingValues)
 			{
 				Color = Color.FromArgb(Color.R, (byte)value, Color.G);
 				SetColor(Color);
-            }
-        }		
+			}
+		}
 
-        private void SSlider_OnOnValueChanged(double value)
-        {
-            if (!IsSettingValues)
-            {
-                var s = (float) value;
-                var l = Color.GetBrightness();
-                var h = Color.GetHue();
+		private void SSlider_OnOnValueChanged(double value)
+		{
+			if (!IsSettingValues)
+			{
+				var s = (float)value;
+				var l = Color.GetBrightness();
+				var h = Color.GetHue();
 				var a = 255;
-                Color = Util.FromAhsb(a, h, s, l);
+				Color = Util.FromAhsb(a, h, s, l);
 
-                SetColor(Color);
-            }
+				SetColor(Color);
+			}
 
-        }
+		}
 
-        private void LSlider_OnOnValueChanged(double value)
-        {
-            if (!IsSettingValues)
-            {
-                var s = Color.GetSaturation();
-                var l = (float) value;
-                var h = Color.GetHue();
+		private void LSlider_OnOnValueChanged(double value)
+		{
+			if (!IsSettingValues)
+			{
+				var s = Color.GetSaturation();
+				var l = (float)value;
+				var h = Color.GetHue();
 				var a = 255;
-                Color = Util.FromAhsb(a, h, s, l);
+				Color = Util.FromAhsb(a, h, s, l);
 
-                SetColor(Color);
-            }
-        }
+				SetColor(Color);
+			}
+		}
 
 		private void SampleImage_MouseMove(object sender, MouseEventArgs e)
 		{
 			if (e.LeftButton == MouseButtonState.Pressed)
-				SampleImageClick(SampleImage.Source as BitmapSource, e.GetPosition(sender as IInputElement));
+				SampleImageClick(e.GetPosition(sender as IInputElement));
 
 		}
 	}
