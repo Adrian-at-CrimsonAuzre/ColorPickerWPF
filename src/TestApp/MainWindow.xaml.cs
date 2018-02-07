@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using System.Drawing;
 namespace TestApp
 {
     /// <summary>
@@ -24,5 +24,10 @@ namespace TestApp
         {
             InitializeComponent();
         }
-    }
+		private int changed = 0;
+		private void ColorPicker_OnPickColor(System.Drawing.Color color)
+		{
+			changed++;
+		}
+	}
 }

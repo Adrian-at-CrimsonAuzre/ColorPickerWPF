@@ -16,7 +16,7 @@
 				<RowDefinition Height="auto"/>
 				<RowDefinition Height="*"/>
 			</Grid.RowDefinitions>
-			<Image x:Name="SampleImage" Source="pack://application:,,,/ColorPickerWPF;component/Resources/colorpicker1.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MouseDown="SampleImage_OnMouseDown"/>
+			<Image x:Name="SampleImage" Source="pack://application:,,,/ColorPickerWPF;component/Resources/colorpicker1.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MouseDown="SampleImage_OnMouseDown" MouseMove="SampleImage_MouseMove"/>
 			<Border x:Name="ColorDisplayBorder" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" Background="White" BorderThickness="2"/>
 		</Grid>
 		<Grid Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

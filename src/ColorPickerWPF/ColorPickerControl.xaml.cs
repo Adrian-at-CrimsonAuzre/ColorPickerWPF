@@ -265,5 +265,12 @@ namespace ColorPickerWPF
                 SetColor(Color);
             }
         }
-    }
+
+		private void SampleImage_MouseMove(object sender, MouseEventArgs e)
+		{
+			if (e.LeftButton == MouseButtonState.Pressed)
+				SampleImageClick(SampleImage.Source as BitmapSource, e.GetPosition(sender as IInputElement));
+
+		}
+	}
 }

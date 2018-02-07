@@ -8,5 +8,5 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="600">
 
-	<ColorPickerWPF:ColorPickerControl x:Name="ColorPicker"/>
+	<ColorPickerWPF:ColorPickerControl x:Name="ColorPicker" OnPickColor="ColorPicker_OnPickColor"/>
 </Window>
