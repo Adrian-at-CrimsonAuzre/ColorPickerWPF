@@ -7,10 +7,10 @@
              d:DesignHeight="32" d:DesignWidth="250">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="30"  />
-            <ColumnDefinition Width="*" MinWidth="120" />
-            <ColumnDefinition Width="60" />
-        </Grid.ColumnDefinitions>
+            <ColumnDefinition Width="70"/>
+            <ColumnDefinition Width="*" MinWidth="120"/>
+			<ColumnDefinition Width="70"/>
+		</Grid.ColumnDefinitions>
 
         <Label x:Name="Label" Content=" " HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="0,2,0,0"/>
         <Slider x:Name="Slider" Grid.Column="1" HorizontalAlignment="Stretch" Margin="10,7,10,0" VerticalAlignment="Top"

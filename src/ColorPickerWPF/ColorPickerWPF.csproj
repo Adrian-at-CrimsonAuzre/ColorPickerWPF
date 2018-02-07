@@ -55,16 +55,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Code\ColorPalette.cs" />
-    <Compile Include="Code\ColorPickerDialogOptions.cs" />
-    <Compile Include="Code\ColorSwatchItem.cs" />
     <Compile Include="Code\Util.cs" />
-    <Compile Include="Code\WriteableFileObject.cs" />
     <Compile Include="ColorPickerControl.xaml.cs">
       <DependentUpon>ColorPickerControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ColorPickerSwatch.xaml.cs">
-      <DependentUpon>ColorPickerSwatch.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -103,17 +96,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ColorPickerSwatch.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="SliderRow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\colorpicker2.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\colorpicker1.png" />

@@ -4,8 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
-using Color = System.Windows.Media.Color;
-
+using Color = System.Drawing.Color;
 namespace ColorPickerWPF.Code
 {
     public static class Util
@@ -28,20 +27,12 @@ namespace ColorPickerWPF.Code
 
         public static Color ColorFromHexString(string hex)
         {
-            return Color.FromRgb(
+            return Color.FromArgb(
                Convert.ToByte(hex.Substring(1, 2), 16),
                Convert.ToByte(hex.Substring(3, 2), 16),
                Convert.ToByte(hex.Substring(5, 2), 16));
         }
-
-        public static bool IsDialogFlagSet(this ColorPickerDialogOptions flags, ColorPickerDialogOptions flag)
-        {
-            if ((flags & flag) == flag)
-            {
-                return true;
-            }
-            return false;
-        }
+		
 
 
         public static BitmapImage GetBitmapImage(BitmapSource bitmapSource)
